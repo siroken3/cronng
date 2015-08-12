@@ -20,18 +20,16 @@ The following JSON is request-body example.
 
 ```json
 {
-   "jobs": [
-      {
-         "name": "Say Hello",
-         "definition": |
-           echo "Hello World."
-      },
-      {
-         "name": "Say Good-bye",
-         "definition": |
-           echo "Good-bye."
-      }
-    ]
+  "jobs": [
+    {
+      "name": "Say Hello",
+      "definition": "echo \"Hello World.\""
+    },
+    {
+      "name": "Say Good-bye",
+      "definition": "echo \"Good-bye.\""
+    }
+  ]
 }
 ```
 
@@ -39,16 +37,31 @@ The following JSON is response-body example.
 
 ```json
 {
-   "jobs": [
-      {
-         "id": "12345678-1234-1234-1234-123456789012",
-         "name": "Say Hello"
-      },
-      {
-         "id": "02345678-0234-0234-0234-023456789012",
-         "name": "Say Good-bye"
-      }
-   ]
+  "jobs": [
+    {
+      "id": "12345678-1234-1234-1234-123456789012",
+      "name": "Say Hello",
+      "procs": [
+        {
+          "status": "SUCCESS",
+          "code": 0,
+          "start_at": "2001-01-01T12:00:00Z",
+          "end_at": "2001-01-01T12:00:01Z"
+        },
+        {
+          "status": "FAILED",
+          "code": 255,
+          "start_at": "2001-01-01T12:00:00Z",
+          "end_at": "2001-01-01T12:00:01Z"
+        }
+      ]
+    },
+    {
+      "id": "02345678-0234-0234-0234-023456789012",
+      "name": "Say Good-bye",
+      "procs": []
+    }
+  ]
 }
 ```
 
