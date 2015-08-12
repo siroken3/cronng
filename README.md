@@ -17,6 +17,12 @@
 
 Create a new job definition.
 
+The following JSON is 
+
+```
+```
+
+
 ### GET /jobs
 
 Get job definitions.
