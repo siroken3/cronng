@@ -11,6 +11,7 @@
 * [GET /procs/:id](#get-procs-id)
 * [DELETE /procs/:id](#delete-procs-id)
 * [GET /jobs/:id/procs](#get-jobs-id-procs)
+* [GET /jobs/:id/history](#get-jobs-id-history)
 
 ### POST /jobs
 
@@ -79,7 +80,7 @@ The following JSON is response-body example.
 ```json
 ```
 
-### GET /jobs/ID
+### GET /jobs/:id
 
 Get a job definition.
 
@@ -94,7 +95,7 @@ The following JSON is response-body example.
 ```json
 ```
 
-### PUT /jobs/ID
+### PUT /jobs/:id
 
 Update a job definition.
 
@@ -109,7 +110,7 @@ The following JSON is response-body example.
 ```json
 ```
 
-### DELETE /jobs/JOB_ID
+### DELETE /jobs/:id
 
 Delete a job definition.
 
@@ -126,7 +127,7 @@ The following JSON is response-body example.
 
 ### POST /procs
 
-Start a process specified by JOB_ID.
+Start a process specified by id.
 
 The following JSON is request-body example.
 
@@ -139,24 +140,9 @@ The following JSON is response-body example.
 ```json
 ```
 
-### GET /procs/JOB_ID
+### GET /procs/:id
 
-Get a process status specified by JOB_ID.
-
-The following JSON is request-body example.
-
-```json
-
-```
-
-The following JSON is response-body example.
-
-```json
-```
-
-### DELETE /procs/PROC_ID
-
-Stop a process specified by PROC_ID.
+Get a process status specified by :id.
 
 The following JSON is request-body example.
 
@@ -169,9 +155,39 @@ The following JSON is response-body example.
 ```json
 ```
 
-### GET /jobs/JOB_ID/procs
+### DELETE /procs/:id
 
-Get process history specified by JOB_ID.
+Stop a process specified by :id.
+
+The following JSON is request-body example.
+
+```json
+
+```
+
+The following JSON is response-body example.
+
+```json
+```
+
+### GET /jobs/:id/procs
+
+Get current processes specified by :id.
+
+The following JSON is request-body example.
+
+```json
+
+```
+
+The following JSON is response-body example.
+
+```json
+```
+
+### GET /jobs/:id/history
+
+Get current processes history specified by :id.
 
 The following JSON is request-body example.
 
