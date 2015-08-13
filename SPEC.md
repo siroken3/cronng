@@ -37,33 +37,6 @@ The following JSON is request-body example.
 The following JSON is response-body example.
 
 ```json
-{
-  "jobs": [
-    {
-      "id": "12345678-1234-1234-1234-123456789012",
-      "name": "Say Hello",
-      "procs": [
-        {
-          "status": "SUCCESS",
-          "code": 0,
-          "start_at": "2001-01-01T12:00:00Z",
-          "end_at": "2001-01-01T12:00:01Z"
-        },
-        {
-          "status": "FAILED",
-          "code": 255,
-          "start_at": "2001-01-01T12:00:00Z",
-          "end_at": "2001-01-01T12:00:01Z"
-        }
-      ]
-    },
-    {
-      "id": "02345678-0234-0234-0234-023456789012",
-      "name": "Say Good-bye",
-      "procs": []
-    }
-  ]
-}
 ```
 
 ### GET /jobs
@@ -73,11 +46,13 @@ Get job definitions.
 The following JSON is request-body example.
 
 ```json
+
 ```
 
 The following JSON is response-body example.
 
 ```json
+
 ```
 
 ### GET /jobs/:id
@@ -183,6 +158,22 @@ The following JSON is request-body example.
 The following JSON is response-body example.
 
 ```json
+{
+  "job": {
+    "id": "12345678-1234-1234-1234-123456789012",
+    "name": "Say Hello"
+  },
+  "procs": [
+    {
+      "status": "RUNNING",
+      "start_at": "2001-01-01T12:00:00Z"
+    },
+    {
+      "status": "RUNNING",
+      "start_at": "2001-01-01T12:00:00Z",
+    }
+  ]
+}
 ```
 
 ### GET /jobs/:id/history
@@ -192,10 +183,29 @@ Get current processes history specified by :id.
 The following JSON is request-body example.
 
 ```json
-
 ```
 
 The following JSON is response-body example.
 
 ```json
+{
+  "job": {
+    "id": "12345678-1234-1234-1234-123456789012",
+    "name": "Say Hello"
+  },
+  "history": [
+    {
+      "status": "SUCCESS",
+      "code": 0,
+      "start_at": "2001-01-01T12:00:00Z",
+      "end_at": "2001-01-01T12:00:01Z"
+    },
+    {
+      "status": "FAILED",
+      "code": 255,
+      "start_at": "2001-01-01T12:00:00Z",
+      "end_at": "2001-01-01T12:00:01Z"
+    }
+  ]
+}
 ```
