@@ -4,14 +4,14 @@
 
 * [POST /jobs](#post-jobs)
 * [GET /jobs](#get-jobs)
-* [GET /jobs/:id](#get-jobs-id)
-* [PUT /jobs/:id](#put-jobs-id)
-* [DELETE /jobs/:id](#delete-jobs-id)
+* [GET /jobs/:id](#get-jobsid)
+* [PUT /jobs/:id](#put-jobsid)
+* [DELETE /jobs/:id](#deletejobsid)
 * [POST /procs](#post-procs)
-* [GET /procs/:id](#get-procs-id)
-* [DELETE /procs/:id](#delete-procs-id)
-* [GET /jobs/:id/procs](#get-jobs-id-procs)
-* [GET /jobs/:id/history](#get-jobs-id-history)
+* [GET /procs/:id](#get-procsid)
+* [DELETE /procs/:id](#deleteprocsid)
+* [GET /jobs/:id/procs](#get-jobsidprocs)
+* [GET /jobs/:id/history](#get-jobsidhistory)
 
 ### POST /jobs
 
@@ -23,12 +23,12 @@ The following JSON is request-body example.
 {
   "jobs": [
     {
-      "name": "Say Hello",
-      "definition": "echo \"Hello World.\""
+      "name": "command1",
+      "definition": "/path/to/command1 arg1 arg2"
     },
     {
-      "name": "Say Good-bye",
-      "definition": "echo \"Good-bye.\""
+      "name": "command2",
+      "definition": "/path/to/command2 arg1"
     }
   ]
 }
@@ -37,6 +37,22 @@ The following JSON is request-body example.
 The following JSON is response-body example.
 
 ```json
+{
+  "jobs": [
+    {
+      "id": "12345678-1234-1234-1234-123456789012",
+      "name": "command1",
+      "definition": "/path/to/command1 arg1 arg2",
+      "created_at": "2001-01-01T00:00:00Z",
+    },
+    {
+      "id": "02345678-0234-0234-0234-023456789012",
+      "name": "command2",
+      "definition": "/path/to/command2 arg1"
+      "created_at": "2001-01-01T00:00:00Z",
+    }
+  ]
+}
 ```
 
 ### GET /jobs
@@ -52,7 +68,22 @@ The following JSON is request-body example.
 The following JSON is response-body example.
 
 ```json
-
+{
+  "jobs": [
+    {
+      "id": "12345678-1234-1234-1234-123456789012",
+      "name": "command1",
+      "definition": "/path/to/command1 arg1 arg2",
+      "created_at": "2001-01-01T00:00:00Z",
+    },
+    {
+      "id": "02345678-0234-0234-0234-023456789012",
+      "name": "command2",
+      "definition": "/path/to/command2 arg1"
+      "created_at": "2001-01-01T00:00:00Z",
+    }
+  ]
+}
 ```
 
 ### GET /jobs/:id
@@ -68,6 +99,14 @@ The following JSON is request-body example.
 The following JSON is response-body example.
 
 ```json
+{
+  "job": {
+      "id": "12345678-1234-1234-1234-123456789012",
+      "name": "command1",
+      "definition": "/path/to/command1 arg1 arg2",
+      "created_at": "2001-01-01T00:00:00Z",
+  }
+}
 ```
 
 ### PUT /jobs/:id
@@ -77,7 +116,13 @@ Update a job definition.
 The following JSON is request-body example.
 
 ```json
-
+{
+  "job": {
+      "name": "command1-2",
+      "definition": "/path/to/command1-2 arg1 arg2",
+      "created_at": "2001-01-01T00:00:00Z",
+  }
+}
 ```
 
 The following JSON is response-body example.
@@ -161,7 +206,7 @@ The following JSON is response-body example.
 {
   "job": {
     "id": "12345678-1234-1234-1234-123456789012",
-    "name": "Say Hello"
+    "name": "command1"
   },
   "procs": [
     {
@@ -191,7 +236,7 @@ The following JSON is response-body example.
 {
   "job": {
     "id": "12345678-1234-1234-1234-123456789012",
-    "name": "Say Hello"
+    "name": "command1"
   },
   "history": [
     {
