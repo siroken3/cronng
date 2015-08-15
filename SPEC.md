@@ -207,8 +207,7 @@ The following JSON is response-body example.
 {
   "proc": {
       "id": "a2345678-a234-a234-a234-a23456789012",
-      "job_id": "12345678-1234-1234-1234-123456789012",
-      "start_at": "2001-01-01T12:00:00Z"
+      "job_id": "12345678-1234-1234-1234-123456789012"
   }
 }
 ```
@@ -237,6 +236,7 @@ body
       "job_id": "12345678-1234-1234-1234-123456789012",
       "trigger_type": "CRON",
       "crontab": "1 * * * *",
+      "start_at": "2001-01-01T12:00:00Z"
   }
 }
 ```
@@ -273,11 +273,13 @@ body
   },
   "procs": [
     {
-      "status": "RUNNING",
+      "id": "a2345678-a234-a234-a234-a23456789012",
+      "trigger_type": "CRON",
       "start_at": "2001-01-01T12:00:00Z"
     },
     {
-      "status": "RUNNING",
+      "id": "b2345678-b234-b234-b234-b23456789012",
+      "trigger_type": "ADHOC",
       "start_at": "2001-01-01T12:00:00Z",
     }
   ]
@@ -302,16 +304,18 @@ The following JSON is response-body example.
   },
   "history": [
     {
-      "status": "SUCCESS",
+      "id": "c2345678-c234-c234-c234-c23456789012",
+      "result": "SUCCESS",
       "code": 0,
       "start_at": "2001-01-01T12:00:00Z",
       "end_at": "2001-01-01T12:00:01Z"
     },
     {
-      "status": "FAILED",
+      "id": "d2345678-d234-d234-d234-d23456789012",
+      "result": "FAILED",
       "code": 255,
-      "start_at": "2001-01-01T12:00:00Z",
-      "end_at": "2001-01-01T12:00:01Z"
+      "start_at": "2001-01-01T11:00:00Z",
+      "end_at": "2001-01-01T11:00:01Z"
     }
   ]
 }
