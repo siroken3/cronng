@@ -74,13 +74,13 @@ The following JSON is response-body example.
       "id": "12345678-1234-1234-1234-123456789012",
       "name": "command1",
       "definition": "/path/to/command1 arg1 arg2",
-      "created_at": "2001-01-01T00:00:00Z",
+      "created_at": "2001-01-01T00:00:00Z"
     },
     {
       "id": "02345678-0234-0234-0234-023456789012",
       "name": "command2",
-      "definition": "/path/to/command2 arg1"
-      "created_at": "2001-01-01T00:00:00Z",
+      "definition": "/path/to/command2 arg1",
+      "created_at": "2001-01-01T00:00:00Z"
     }
   ]
 }
