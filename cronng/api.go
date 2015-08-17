@@ -11,7 +11,7 @@ type ApiHandler struct {
 	Api rest.Api
 }
 
-func Init() *ApiHander {
+func NewApi() *ApiHander {
 	handler := ApiHandler{
 		Api: rest.NewApi(),
 	}

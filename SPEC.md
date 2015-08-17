@@ -46,7 +46,7 @@ Content-Length: 149
 * [GET /procs/:id](#get-procsid)
 * [DELETE /procs/:id](#deleteprocsid)
 * [GET /jobs/:id/procs](#get-jobsidprocs)
-* [GET /jobs/:id/history](#get-jobsidhistory)
+* [GET /jobs/:id/log](#get-jobsidlog)
 
 ### POST /jobs
 
@@ -287,12 +287,12 @@ body
 }
 ```
 
-### GET /jobs/:id/history
+### GET /jobs/:id/log
 
 Get current processes history specified by :id.
 
 ```
-GET /jobs/12345678-1234-1234-1234-123456789012/history
+GET /jobs/12345678-1234-1234-1234-123456789012/log
 ```
 
 The following JSON is response-body example.
@@ -303,16 +303,16 @@ The following JSON is response-body example.
     "id": "12345678-1234-1234-1234-123456789012",
     "name": "command1"
   },
-  "history": [
+  "log": [
     {
-      "id": "c2345678-c234-c234-c234-c23456789012",
+      "proc_id": "c2345678-c234-c234-c234-c23456789012",
       "result": "SUCCESS",
       "code": 0,
       "start_at": "2001-01-01T12:00:00Z",
       "end_at": "2001-01-01T12:00:01Z"
     },
     {
-      "id": "d2345678-d234-d234-d234-d23456789012",
+      "proc_id": "d2345678-d234-d234-d234-d23456789012",
       "result": "FAILED",
       "code": 255,
       "start_at": "2001-01-01T11:00:00Z",

@@ -15,7 +15,7 @@ type Proc struct {
 	StartAt     time
 }
 
-type ProcResult struct {
+type ProcLog struct {
 	ProcId  string
 	Result  string
 	Code    int
@@ -23,7 +23,8 @@ type ProcResult struct {
 	EndAt   time
 }
 
-func CreateJob(definition Job) {
+func CreateJob(definition Job) *Job {
+	return &Job{}
 }
 
 func GetJobs() {
@@ -50,5 +51,5 @@ func StopProc() {
 func GetProcsByJob() {
 }
 
-func GetHistoryByJob() {
+func GetProcLogByJob() {
 }
