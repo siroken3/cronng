@@ -15,41 +15,46 @@ type Proc struct {
 	StartAt     time
 }
 
-type ProcLog struct {
-	ProcId  string
-	Result  string
-	Code    int
-	StartAt time
-	EndAt   time
+func CreateJob() (job *Job) {
+	// Create Job instance
+	job := &Job{}
+	// Persist Job instance
+	return
 }
 
-func CreateJob(definition Job) *Job {
-	return &Job{}
+func GetJobs() (jobs []Job) {
+	jobs = []Job{}
+	return
 }
 
-func GetJobs() {
+func GetJob() (job *Job) {
+	job = &Job{}
 }
 
-func GetJob() {
+func UpdateJob() (job *Job) {
+	job = &Job{}
 }
 
-func UpdateJob() {
+func DeleteJob() (job *Job) {
+	job := &Job{}
 }
 
-func DeleteJob() {
+func StartProc() (proc *Proc) {
+	proc := &Proc{}
 }
 
-func StartProc() {
+func GetProc() *Proc {
+	proc := &Proc{}
 }
 
-func GetProc() {
+func StopProc() *Proc {
+	proc := &Proc{}
 }
 
-func StopProc() {
+func GetProcsByJob() []Proc {
+	proc := &Proc{}
 }
 
-func GetProcsByJob() {
-}
-
-func GetProcLogByJob() {
+func GetProcLogByJob() []Proc {
+	proc := &Proc{}
 }
