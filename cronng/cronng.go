@@ -1,21 +1,30 @@
 package cronng
 
+type JobDefinition struct {
+	Name       string `json:"name"`
+	Definition string `json:"definition"`
+}
+
+type JobId string
+
 type Job struct {
-	Id         string
+	Id         JobId
 	Name       string
 	Definition string
 	CreatedAt  time
 }
 
+type ProcId string
+
 type Proc struct {
-	Id          string
-	JobId       string
+	Id          ProcId
+	JobId       JobId
 	TriggerType string
 	Crontab     string
 	StartAt     time
 }
 
-func CreateJob() (job *Job) {
+func NewJob() (job *JobDefinition) {
 	// Create Job instance
 	job := &Job{}
 	// Persist Job instance
