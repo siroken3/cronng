@@ -29,7 +29,7 @@ Content-Length: 149
 
 |Code          |Description|
 |--------------|-----------|
-|missing	     |This means a resource does not exist.|
+|missing       |This means a resource does not exist.|
 |missing_field |This means a required field on a resource has not been set.|
 |invalid       |This means the formatting of a field is invalid.|
 |already_exists|This means another resource has the same value as this field. This can happen in resources that must have some unique key|
@@ -195,7 +195,7 @@ The following JSON is request-body example.
 }
 ```
 
-|name            |type        |description                        |required|note            |
+|name            |type        |description                        |required|note   |
 |----------------|------------|-----------------------------------|--------|----------------|
 |job_id          |string      |The job id for start process.      |Y       |                |
 |trigger_type    |string      |How this process will be started.  |Y       |CRON or ADHOC   |
