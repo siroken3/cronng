@@ -17,6 +17,7 @@ func DeleteJob(def JobId) (job *Job) {
 
 func StartProc(job Job) (proc *Proc) {
 	proc := &Proc{}
+	ProcQueue <- proc
 	return
 }
 
