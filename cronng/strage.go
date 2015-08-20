@@ -8,6 +8,6 @@ type JobPool interface {
 
 type ProcPool interface {
 	Save(j Proc) error
-	Load(id ProcId) (Job, error)
+	Load(id ProcId) (Proc, error)
 	Delete(id ProcId) error
 }
