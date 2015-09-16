@@ -1,13 +1,13 @@
 package cronng
 
-type JobPool interface {
+type JobStrage interface {
 	Save(j Job) error
 	Load(id JobId) (Job, error)
 	Delete(id JobId) error
 }
 
-type ProcPool interface {
-	Save(j Proc) error
-	Load(id ProcId) (Proc, error)
-	Delete(id ProcId) error
+type ExecutionStrage interface {
+	Save(j *Execution) error
+	Load(id ExecutionId) (Execution, error)
+	Delete(id ExecutionId) error
 }

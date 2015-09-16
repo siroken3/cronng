@@ -4,16 +4,43 @@ import "code.google.com/p/go-uuid/uuid"
 import "net/url"
 import "time"
 
+// JobService
+type JobService struct {
+	Jobstrage Jobstrage
+}
+
+func (service *JobService) Get(id JobId) (job *Job) {
+	job = service.Jobstrage.Load(id)
+	return
+}
+
+func (service *JobService) Delete(id JobId) (job *Job) {
+	job := &Job{}
+	return
+}
+
+// Job
+type JobId uuid.UUID
+
 type Job struct {
-	uuid               uuid.UUID
-	name               string
-	description        string
-	group              string
-	multipleExecutions bool
-	timeout            time.Time
-	script             Script
-	schedule           Schedule
-	notification       Notification
+	id           JobId
+	name         string
+	description  string
+	timeout      time.Time
+	script       Script
+	schedule     Schedule
+	notification Notification
+}
+
+func (job *Job) Start() (execution *Execution, error Error) {
+	execution := &Execution{}
+	ProcQueue <- proc
+	return
+}
+
+func (job *Job) GetExecutions() (executions []Execition, error Error) {
+	executions := &[]Execution{}
+	return
 }
 
 type Schedule string
@@ -32,8 +59,10 @@ const (
 	ABORTED
 )
 
+type ExecutionId uuid.UUID
+
 type Execution struct {
-	uuid        uuid.UUID
+	id          ExecutionId
 	output      url.URL
 	status      Status
 	user        User
@@ -44,6 +73,16 @@ type Execution struct {
 	statistics  Statistics
 	ended       time.Time
 	abortedBy   User
+}
+
+func (execution *Execution) Abort() error {
+}
+
+type Statistics struct {
+	EnvVar string
+	VmPeak TimeSequence // peak value of virtual memory
+	VmHWM  TimeSequence // peak value of VmRSS
+	VmSwap TimeSequence
 }
 
 type TimeSequenceEntry struct {
@@ -76,13 +115,6 @@ func (ts *TimeSequence) Avg() (result float64) {
 		sum += e.value
 	}
 	result = sum / count
-}
-
-type Statistics struct {
-	EnvVar string
-	VmPeak TimeSequence // peak value of virtual memory
-	VmHWM  TimeSequence // peak value of VmRSS
-	VmSwap TimeSequence
 }
 
 type User struct {
