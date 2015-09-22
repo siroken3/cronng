@@ -1,2 +1,3 @@
 gom "github.com/ant0ine/go-json-rest/rest"
 gom "golang.org/x/net/websocket"
+gom "gopkg.in/gorp.v1"

@@ -4,51 +4,51 @@ import "code.google.com/p/go-uuid/uuid"
 import "net/url"
 import "time"
 
-// JobService
-type JobService struct {
-	Jobstrage Jobstrage
+type Notification struct {
+	OnStart   [](func(Execution) int)
+	OnSuccess [](func(Execution) int)
+	OnFailure [](func(Execution) int)
 }
 
-func (service *JobService) Get(id JobId) (job *Job) {
-	job = service.Jobstrage.Load(id)
-	return
-}
-
-func (service *JobService) Delete(id JobId) (job *Job) {
-	job := &Job{}
-	return
+type User struct {
 }
 
 // Job
 type JobId uuid.UUID
-
+type Schedule string
+type Script string
 type Job struct {
-	id           JobId
-	name         string
-	description  string
-	timeout      time.Time
-	script       Script
-	schedule     Schedule
-	notification Notification
+	Id          JobId
+	Name        string
+	Description string
+	Timeout     time.Time
+	Script      Script
+	Schedule    Schedule
+	Notfication Notification
+	Created     time.Time
 }
 
-func (job *Job) Start() (execution *Execution, error Error) {
+func NewJob(job Job) (job *Job) {
+	// Persist Job instance
+	dbmap.Insert(job)
+	return
+}
+
+func (self *Job) PreInsert(s gorp.SqlExecutor) error {
+	self.Id = JobId.NewUUID()
+	self.Created = time.Now().UnixNano()
+	return nil
+}
+
+func (self *Job) Start(user User, args []string) (execution *Execution, error Error) {
 	execution := &Execution{}
 	ProcQueue <- proc
 	return
 }
 
-func (job *Job) GetExecutions() (executions []Execition, error Error) {
+func (self *Job) GetExecutions() (executions []Execition, error Error) {
 	executions := &[]Execution{}
 	return
-}
-
-type Schedule string
-
-type Notification struct {
-	onstart   [](func(Execution) int)
-	onsuccess [](func(Execution) int)
-	onfailure [](func(Execution) int)
 }
 
 // Execution
@@ -59,30 +59,30 @@ const (
 	ABORTED
 )
 
-type ExecutionId uuid.UUID
-
-type Execution struct {
-	id          ExecutionId
-	output      url.URL
-	status      Status
-	user        User
-	started     time.Time
-	description string
-	job         Job
-	args        []string
-	statistics  Statistics
-	ended       time.Time
-	abortedBy   User
-}
-
-func (execution *Execution) Abort() error {
-}
-
 type Statistics struct {
 	EnvVar string
 	VmPeak TimeSequence // peak value of virtual memory
 	VmHWM  TimeSequence // peak value of VmRSS
 	VmSwap TimeSequence
+}
+
+type ExecutionId uuid.UUID
+type Status int32
+type Execution struct {
+	Id          ExecutionId
+	Output      url.URL
+	Status      Status
+	User        User
+	Started     time.Time
+	Description string
+	Job         Job
+	Args        []string
+	Statistics  Statistics
+	Ended       time.Time
+	AbortedBy   User
+}
+
+func (execution *Execution) Abort(user User) error {
 }
 
 type TimeSequenceEntry struct {
@@ -115,22 +115,4 @@ func (ts *TimeSequence) Avg() (result float64) {
 		sum += e.value
 	}
 	result = sum / count
-}
-
-type User struct {
-}
-
-//
-// coding snippets are below
-//
-func NewJob(script Script) (job *Job) {
-	// Create Job instance
-	job := &Job{}
-	// Persist Job instance
-	return
-}
-
-func GetJobs() (jobs []Job) {
-	jobs = []Job{}
-	return
 }
