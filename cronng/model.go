@@ -1,64 +1,38 @@
 package cronng
 
-import "code.google.com/p/go-uuid/uuid"
-import "net/url"
-import "time"
+import (
+	"math"
+	"time"
+)
 
-type Notification struct {
-	OnStart   [](func(Execution) int)
-	OnSuccess [](func(Execution) int)
-	OnFailure [](func(Execution) int)
-}
-
+// User
+type UserId string
 type User struct {
+	Id UserId
 }
 
 // Job
-type JobId uuid.UUID
-type Schedule string
-type Script string
 type Job struct {
-	Id          JobId
-	Name        string
-	Description string
-	Timeout     time.Time
-	Script      Script
-	Schedule    Schedule
-	Notfication Notification
-	Created     time.Time
+	Id          string    `gorm:"id, primarykey" json:"id"`
+	Name        string    `db:"name" json:"name"`
+	Description string    `db:"description" json:"description"`
+	Timeout     time.Time `db:"timeout" json:"timeout"`
+	Script      string    `db:"script" json:"script"`
+	Schedule    string    `db:"schedule" json:"schdule"`
+	Created     time.Time `db:"created" json:"created"`
 }
 
-func NewJob(job Job) (job *Job) {
-	// Persist Job instance
-	dbmap.Insert(job)
-	return
-}
-
-func (self *Job) PreInsert(s gorp.SqlExecutor) error {
-	self.Id = JobId.NewUUID()
-	self.Created = time.Now().UnixNano()
-	return nil
-}
-
-func (self *Job) Start(user User, args []string) (execution *Execution, error Error) {
+func (self *Job) Start(user User, args []string) (*Execution, error) {
 	execution := &Execution{}
-	ProcQueue <- proc
-	return
+	return execution, nil
 }
 
-func (self *Job) GetExecutions() (executions []Execition, error Error) {
+func (self *Job) GetExecutions() (*[]Execution, error) {
 	executions := &[]Execution{}
-	return
+	return executions, nil
 }
 
 // Execution
-const (
-	RUNNING = iota
-	SUCCEEDED
-	FAILED
-	ABORTED
-)
-
 type Statistics struct {
 	EnvVar string
 	VmPeak TimeSequence // peak value of virtual memory
@@ -66,23 +40,31 @@ type Statistics struct {
 	VmSwap TimeSequence
 }
 
-type ExecutionId uuid.UUID
 type Status int32
+
+const (
+	RUNNING Status = iota
+	SUCCEEDED
+	FAILED
+	ABORTED
+)
+
 type Execution struct {
-	Id          ExecutionId
-	Output      url.URL
+	Id          string
+	Output      string
 	Status      Status
-	User        User
+	User        string
 	Started     time.Time
 	Description string
-	Job         Job
+	JobId       string
 	Args        []string
 	Statistics  Statistics
 	Ended       time.Time
-	AbortedBy   User
+	AbortedBy   string
 }
 
 func (execution *Execution) Abort(user User) error {
+	return nil
 }
 
 type TimeSequenceEntry struct {
@@ -95,17 +77,19 @@ type TimeSequence struct {
 }
 
 func (ts *TimeSequence) Max() (result float64) {
-	result = math.MinFloat64
+	result = math.SmallestNonzeroFloat64
 	for _, e := range ts.entries {
-		result = Fmax(result, e.value)
+		result = math.Max(result, e.value)
 	}
+	return
 }
 
 func (ts *TimeSequence) Min() (result float64) {
 	result = math.MaxFloat64
 	for _, e := range ts.entries {
-		result = Fmin(result, e.value)
+		result = math.Min(result, e.value)
 	}
+	return
 }
 
 func (ts *TimeSequence) Avg() (result float64) {
@@ -114,5 +98,6 @@ func (ts *TimeSequence) Avg() (result float64) {
 	for _, e := range ts.entries {
 		sum += e.value
 	}
-	result = sum / count
+	result = sum / float64(count)
+	return
 }
