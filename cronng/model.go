@@ -57,7 +57,7 @@ type Execution struct {
 	Started     time.Time
 	Description string
 	JobId       string
-	Args        []string
+	Args        string
 	Statistics  Statistics
 	Ended       time.Time
 	AbortedBy   string
