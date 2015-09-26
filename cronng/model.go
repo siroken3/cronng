@@ -1,25 +1,37 @@
 package cronng
 
-import (
-	"math"
-	"time"
+import "time"
+
+// fundamental types
+type UUIDModelID string
+
+type UUIDModel struct {
+	ID UUIDModelID `gorm:"primary_key" json:"id"`
+}
+
+type Status int
+
+const (
+	RUNNING Status = iota
+	SUCCEEDED
+	FAILED
+	ABORTED
 )
 
 // User
-type UserId string
 type User struct {
-	Id UserId
+	UUIDModel
 }
 
 // Job
 type Job struct {
-	Id          string    `gorm:"id, primarykey" json:"id"`
-	Name        string    `db:"name" json:"name"`
-	Description string    `db:"description" json:"description"`
-	Timeout     time.Time `db:"timeout" json:"timeout"`
-	Script      string    `db:"script" json:"script"`
-	Schedule    string    `db:"schedule" json:"schdule"`
-	Created     time.Time `db:"created" json:"created"`
+	UUIDModel
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	Timeout     time.Time `json:"timeout"`
+	Script      string    `json:"script"`
+	Schedule    string    `json:"schdule"`
+	Created     time.Time `json:"created"`
 }
 
 func (self *Job) Start(user User, args []string) (*Execution, error) {
@@ -33,71 +45,46 @@ func (self *Job) GetExecutions() (*[]Execution, error) {
 }
 
 // Execution
-type Statistics struct {
-	EnvVar string
-	VmPeak TimeSequence // peak value of virtual memory
-	VmHWM  TimeSequence // peak value of VmRSS
-	VmSwap TimeSequence
+type Vm struct {
+	MonitoringID UUIDModelID
+	Time         time.Time `json: time`
+	Value        float64   `json:value`
+}
+type VmRss struct {
+	MonitoringID UUIDModelID
+	Time         time.Time `json: time`
+	Value        float64   `json:value`
+}
+type VmSwap struct {
+	MonitoringID UUIDModelID
+	Time         time.Time `json: time`
+	Value        float64   `json:value`
 }
 
-type Status int32
-
-const (
-	RUNNING Status = iota
-	SUCCEEDED
-	FAILED
-	ABORTED
-)
+type Monitoring struct {
+	UUIDModel
+	ExecutionID UUIDModelID
+	EnvVar      string   `json:"env_var"`
+	Vms         []Vm     `json:"vm"`     // peak value of virtual memory
+	VmRss       []VmRss  `json:"vm_rss"` // peak value of VmRSS
+	VmSwap      []VmSwap `json:"vm_swap"`
+}
 
 type Execution struct {
-	Id          string
-	Output      string
-	Status      Status
-	User        string
-	Started     time.Time
-	Description string
-	JobId       string
-	Args        string
-	Statistics  Statistics
-	Ended       time.Time
-	AbortedBy   string
+	UUIDModel
+	StdOutURL   string      `json:"stdout_url"` // websocket streaming output url
+	StdErrURL   string      `json:"stderr_url"` // websocket streaming output url
+	Status      Status      `json:"status"`
+	UserID      UUIDModelID `json:"user_id"`
+	JobID       UUIDModelID `json:"job_id"`
+	Description string      `json:"description"`
+	Args        string      `json:"args"`
+	Monitoring  Monitoring  `json:"monitoring"`
+	Started     time.Time   `json:"started_at"`
+	Ended       time.Time   `json:"ended_at"`
+	AbortedBy   UUIDModelID `json:"aborted_by"`
 }
 
-func (execution *Execution) Abort(user User) error {
+func (execution *Execution) Signal(signal int32, user User) error {
 	return nil
-}
-
-type TimeSequenceEntry struct {
-	time  time.Time
-	value float64
-}
-
-type TimeSequence struct {
-	entries []TimeSequenceEntry
-}
-
-func (ts *TimeSequence) Max() (result float64) {
-	result = math.SmallestNonzeroFloat64
-	for _, e := range ts.entries {
-		result = math.Max(result, e.value)
-	}
-	return
-}
-
-func (ts *TimeSequence) Min() (result float64) {
-	result = math.MaxFloat64
-	for _, e := range ts.entries {
-		result = math.Min(result, e.value)
-	}
-	return
-}
-
-func (ts *TimeSequence) Avg() (result float64) {
-	sum := 0.0
-	count := len(ts.entries)
-	for _, e := range ts.entries {
-		sum += e.value
-	}
-	result = sum / float64(count)
-	return
 }

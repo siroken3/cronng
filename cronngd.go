@@ -1,16 +1,8 @@
 package main
 
-import (
-	"fmt"
-
-	"./cronng"
-)
-
-var Strage = cronng.NewLocalStrage()
+import "./cronng"
 
 func main() {
-	defer Strage.Db.Close()
-	Strage.Insert(&cronng.Job{Name: "myjob"})
-	v := Strage.Insert(&cronng.Execution{Description: "my first job", Status: cronng.FAILED})
-	fmt.Print(v)
+	Strage := cronng.NewLocalStrage()
+	defer Strage.DB().Close()
 }
