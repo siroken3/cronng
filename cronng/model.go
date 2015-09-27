@@ -1,29 +1,36 @@
 package cronng
 
-import "time"
+import (
+	"time"
+
+	uuid "github.com/satori/go.uuid"
+)
 
 // fundamental types
-type UUIDModel struct {
-	ID string `gorm:"primary_key" sql:"type:varchar(40)" json:"id"`
-}
+type Arg string
+
+type EnvVar map[string]string
+
+type UUIDHex string
 
 type Status int
 
 const (
-	RUNNING Status = iota
-	SUCCEEDED
-	FAILED
-	ABORTED
+	BEFORE_RUNNING Status = iota
+	RUNNING
+	EXIT_SUCCEEDED
+	EXIT_FAILED
+	EXIT_ABORTED
 )
 
 // User
 type User struct {
-	UUIDModel
+	ID UUIDHex `json:"id"`
 }
 
 // Job
 type Job struct {
-	UUIDModel
+	ID          UUIDHex   `json:"id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	Timeout     time.Time `json:"timeout"`
@@ -38,42 +45,52 @@ func (self *Job) GetExecutions() (*[]Execution, error) {
 }
 
 // Execution
-type Vm struct {
-	MonitoringID string    `sql:"type:varchar(40)"`
-	Time         time.Time `json: time`
-	Value        float64   `json:value`
-}
-type VmRss struct {
-	MonitoringID string    `sql:"type:varchar(40)"`
-	Time         time.Time `json: time`
-	Value        float64   `json:value`
-}
-type VmSwap struct {
-	MonitoringID string    `sql:"type:varchar(40)"`
-	Time         time.Time `json: time`
-	Value        float64   `json:value`
+type MonitoringItem struct {
+	Time  time.Time `json:time`
+	Value float64   `json:value`
 }
 
 type Monitoring struct {
-	UUIDModel
-	ExecutionID string   `sql:"type:varchar(40)"`
-	EnvVar      string   `json:"env_var"`
-	Vms         []Vm     `json:"vm"`     // peak value of virtual memory
-	VmRss       []VmRss  `json:"vm_rss"` // peak value of VmRSS
-	VmSwap      []VmSwap `json:"vm_swap"`
+	ID     UUIDHex          `json:"id"`
+	EnvVar EnvVar           `json:"env_var"`
+	Vms    []MonitoringItem `json:"vm"`     // peak value of virtual memory
+	VmRss  []MonitoringItem `json:"vm_rss"` // peak value of VmRSS
+	VmSwap []MonitoringItem `json:"vm_swap"`
 }
 
 type Execution struct {
-	UUIDModel
+	ID          UUIDHex    `json:"id"`
 	StdOutURL   string     `json:"stdout_url"` // websocket streaming output url
 	StdErrURL   string     `json:"stderr_url"` // websocket streaming output url
 	Status      Status     `json:"status"`
-	UserID      string     `sql:"type:varchar(40)" json:"user_id"`
-	JobID       string     `sql:"type:varchar(40)" json:"job_id"`
-	Description string     `sql:"type:text" json:"description"`
-	Args        string     `sql:"type:text" json:"args"`
+	User        User       `json:"user"`
+	Job         Job        `json:"job"`
+	Description string     `json:"description"`
+	Args        []Arg      `json:"args"`
 	Monitoring  Monitoring `json:"monitoring"`
 	Started     time.Time  `json:"started_at"`
 	Ended       time.Time  `json:"ended_at"`
-	AbortedBy   string     `sql:"type:varchar(40)" json:"aborted_by"`
+	AbortedBy   User       `json:"aborted_by"`
+
+	stdout chan string
+	stderr chan string
+	quit   chan bool
+}
+
+func NewExecution(user User, job Job, args []Arg, description string) (execution *Execution) {
+	execution = &Execution{
+		ID:          uuid.NewV1().String(),
+		Status:      BEFORE_RUNNING,
+		User:        user,
+		Job:         job,
+		Description: description,
+		Args:        args,
+		Monitoring:  nil,
+		StartedAt:   nil,
+		EndedAt:     nil,
+		AbortedBy:   nil,
+		stdout:      make(chan string),
+		stderr:      make(chan string),
+		quit:        make(chan bool),
+	}
 }
