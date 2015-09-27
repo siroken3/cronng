@@ -2,7 +2,12 @@ package main
 
 import "./cronng"
 
+var Strage = cronng.NewLocalStrage()
+
 func main() {
-	Strage := cronng.NewLocalStrage()
+	job := &cronng.Job{}
+	//	Strage.NewRecord(job)
+	Strage.Create(job)
+
 	defer Strage.DB().Close()
 }

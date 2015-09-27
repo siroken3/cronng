@@ -18,7 +18,7 @@ func NewLocalStrage() gorm.DB {
 	if err != nil {
 		panic(err)
 	}
-	//	db.LogMode(true)
+	db.LogMode(true)
 	db.AutoMigrate(&Vm{})
 	db.AutoMigrate(&VmRss{})
 	db.AutoMigrate(&VmSwap{})
@@ -27,17 +27,3 @@ func NewLocalStrage() gorm.DB {
 	db.AutoMigrate(&Execution{})
 	return db
 }
-
-/*
-func (self *Job) PreInsert(s gorp.SqlExecutor) error {
-	self.Id =
-	self.Created = time.Now()
-	return nil
-}
-
-func (self *Execution) PreInsert(s gorp.SqlExecutor) error {
-	self.Id = uuid.NewV1().String()
-	self.Started = time.Now()
-	return nil
-}
-*/
