@@ -13,6 +13,11 @@ type EnvVar map[string]string
 
 type UUIDHex string
 
+func NewUUIDHex() (newuuid UUIDHex) {
+	newuuid = UUIDHex(uuid.NewV1().String())
+	return
+}
+
 type Status int
 
 const (
@@ -25,7 +30,7 @@ const (
 
 // User
 type User struct {
-	ID UUIDHex `json:"id"`
+	ID string `json:"id"`
 }
 
 // Job
@@ -33,10 +38,18 @@ type Job struct {
 	ID          UUIDHex   `json:"id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
-	Timeout     time.Time `json:"timeout"`
 	Script      string    `json:"script"`
 	Schedule    string    `json:"schdule"`
 	Created     time.Time `json:"created"`
+}
+
+func NewRecord(job *Job) {
+	if job.ID != "" {
+		return
+	}
+	job.ID = NewUUIDHex()
+	job.Created = time.Now()
+	return
 }
 
 func (self *Job) GetExecutions() (*[]Execution, error) {
@@ -79,18 +92,15 @@ type Execution struct {
 
 func NewExecution(user User, job Job, args []Arg, description string) (execution *Execution) {
 	execution = &Execution{
-		ID:          uuid.NewV1().String(),
+		ID:          NewUUIDHex(),
 		Status:      BEFORE_RUNNING,
 		User:        user,
 		Job:         job,
 		Description: description,
 		Args:        args,
-		Monitoring:  nil,
-		StartedAt:   nil,
-		EndedAt:     nil,
-		AbortedBy:   nil,
 		stdout:      make(chan string),
 		stderr:      make(chan string),
 		quit:        make(chan bool),
 	}
+	return
 }

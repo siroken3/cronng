@@ -2,6 +2,7 @@ package cronng
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -19,10 +20,10 @@ func bindStream(readCloser io.ReadCloser, output chan string) {
 	}
 }
 
-func saveScript(prefix, content string) (scriptName, error) {
+func saveScript(prefix, content string) (string, error) {
 	fw, error := ioutil.TempFile("", prefix)
 	if error != nil {
-		return nil, error
+		return "", error
 	}
 	defer fw.Close()
 	fw.Write([]byte(content))
@@ -31,36 +32,40 @@ func saveScript(prefix, content string) (scriptName, error) {
 	return scriptName, nil
 }
 
-func (job *Job) Start(user User, args []Arg, envvar EnvVar, description string) (*Execution, error) {
+func execScript(scriptName string, args []Arg, execution *Execution) {
+	// exec script
+	fmt.Println("in goroutine: " + scriptName)
+	cmd := exec.Command(scriptName, string(args[0]))
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		log.Fatal(err)
+	}
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		log.Fatal(err)
+	}
+	cmd.Start()
+	bindStream(stdout, execution.stdout)
+	bindStream(stderr, execution.stderr)
+	cmd.Wait()
+	defer func() {
+		execution.Ended = time.Now()
+		execution.quit <- true
+	}()
+}
+
+func (job *Job) Start(user User, args []Arg, envvar EnvVar, description string) (execition *Execution, err error) {
 	// make execution object
-	execution = NewExecution(user, job, args, description)
+	execution := NewExecution(user, *job, args, description)
 	// save script
-	scriptName, error := saveScript(execution.ID, job.Script)
+	scriptName, error := saveScript(string(execution.ID), job.Script)
 	if error != nil {
 		log.Fatal(error)
-		return error
+		return nil, error
 	}
-	go func() {
-		// exec script
-		cmd := exec.Command(scriptName, args)
-		stdout, err := cmd.StdoutPipe()
-		if err != nil {
-			log.Fatal(err)
-		}
-		stderr, err := cmd.StderrPipe()
-		if err != nil {
-			log.Fatal(err)
-		}
-		cmd.Start()
-		execution.StartedAt = time.Now()
-		bindStream(stdout, execution.stdout)
-		bindStream(stderr, execution.stderr)
-		cmd.Wait()
-		defer func() {
-			execution.EndedAt = time.Now()
-			execution.quit <- true
-		}()
-	}()
+	//	fmt.Println("outside goroutine: " + scriptName)
+	execution.Started = time.Now()
+	go execScript(scriptName, args, execution)
 	return execution, nil
 }
 
